@@ -14,7 +14,7 @@ Outline of real-time CNC machine tool monitoring using MTConnect and part detect
 ## System Architecture Overview
 
 <p align="center" id="figure-2">
-  <img src="./images/Figure2.png" alt="System configuration overview" style="width: 70%;"> 
+  <img src="./Images/Figure2.png" alt="System configuration overview" style="width: 70%;"> 
 </p> 
 
 <p align="center">
