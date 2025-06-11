@@ -208,14 +208,14 @@ The tool order management system provides dynamic control over the sequences of 
 
 #### Features
 - **Add New Tool Sequences**: Define and register new tool orders associated with specific parts.
-- **Activate/Deactivate Sequences**: Toggle tool orders on or off as needed for different production scenarios.
+- **Activate/Deactivate Sequences**: Toggle tool orders on or off as needed.
 
 #### How It Works
 - Tool sequences are managed via a **Python-based Tool Order Registration Application**.
 - All sequences are stored in the `tool_order` table in the database.
 - The `is_active` column in the table indicates whether a tool sequence is currently in use.
 
-#### 🔄 Tool Order Updates
+#### Tool Order Updates
 - **Current Behavior**: The algorithm polls the database **hourly** to retrieve the most recent active tool orders.
 - **Planned Improvement**: Replace polling with **event-driven updates** by adding database triggers.
   - Enables immediate response to tool sequence changes
