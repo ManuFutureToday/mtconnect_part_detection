@@ -159,27 +159,32 @@ This ensures robust, real-time data logging even across agent restarts or networ
 
 ### 1. Part Detection Algorithm
 
-When traditional part signals are missing, this algorithm detects parts by analyzing the sequence of tool usage from MTConnect data. This enables accurate real-time part tracking and supports advanced monitoring applications.
+When traditional part signals are missing, this algorithm detects machining operations by analyzing the sequence of tool transitions from MTConnect data. It uses tool number event streams collected via MTConnect Sample Requests to track tool usage patterns over time.
+
+## Inputs and Outputs
+
+| Parameter          | Description                                                                                       |
+|--------------------|---------------------------------------------------------------------------------------------------|
+| `part_transitions` | Dictionary mapping each part to ((s_1, s_2), (e_1, e_2)) start and end tool transition pairs.     |
+| `data`             | Array of tool transition time series data. Each entry contains a tool number and a timestamp.     |
+| **Output**         | List of detected operations, each represented as `(part, t_s, t_e)` where `t_s` and `t_e` are start and end times of the operation. |
+
+## Pseudocode
 
 ```plaintext
 INPUT: 
-  part_transitions: dictionary mapping each part to ((s_1, s_2), (e_1, e_2)) 
-    // start and end tool transition pairs
-  data: array of tool transition time series data
-    // data[i] = (tool number, timestamp)
-
+  part_transitions: dictionary mapping each part to ((s_1, s_2), (e_1, e_2)) // start and end tool transition pairs
+  data: array of tool transition time series data // data[i] = (tool number, timestamp)
 OUTPUT: 
   operation: list of (part, t_s, t_e) tuples
 
 Initialize:
   operation ← []
   n ← length(data)
-
 for i = 0 to n - 2 do
   for each (part, ((s_1, s_2), (e_1, e_2))) in part_transitions do
     if (data[i], data[i + 1]) = (s_1, s_2) then
       t_s ← data[i].time
-
       for j = i + 2 to n - 2 do
         if (data[j], data[j + 1]) = (e_1, e_2) then
           t_e ← data[j + 1].time
@@ -187,7 +192,6 @@ for i = 0 to n - 2 do
           break
         end if
       end for
-
     end if
   end for
 end for
