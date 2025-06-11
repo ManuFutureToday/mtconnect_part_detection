@@ -157,6 +157,11 @@ This ensures robust, real-time data logging even across agent restarts or networ
 
 **Yeeun, please fill out this section. Refer to the previous sections on formatting, and style. You can split two parts for 1) part detection algorithm, 2) implementation including tool order registration.**
 
+### 1. Part Detection Algorithm
+
+### 2. Implementation and Tool Order Registration
+
+
 # Example of Grafana Dashboard
 
 The figure below showcases a real-time [Grafana](https://grafana.com/) dashboard that visualizes CNC machine tool data collected via MTConnect:
