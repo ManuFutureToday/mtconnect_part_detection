@@ -172,12 +172,6 @@ When traditional part signals are missing, this algorithm detects machining oper
 ## Pseudocode
 
 ```plaintext
-INPUT: 
-  part_transitions: dictionary mapping each part to `((s_1, s_2), (e_1, e_2))` // start and end tool transition pairs
-  data: array of tool transition time series data // data[i] = (tool number, timestamp)
-OUTPUT: 
-  operation: list of (part, t_s, t_e) tuples
-
 Initialize:
   operation ← []
   n ← length(data)
