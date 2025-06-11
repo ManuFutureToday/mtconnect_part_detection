@@ -165,7 +165,7 @@ When traditional part signals are missing, this algorithm detects machining oper
 
 | Parameter          | Description                                                                                       |
 |--------------------|---------------------------------------------------------------------------------------------------|
-| `part_transitions` | Dictionary mapping each part to ((s_1, s_2), (e_1, e_2)) start and end tool transition pairs.     |
+| `part_transitions` | Dictionary mapping each part to `((s_1, s_2), (e_1, e_2))` start and end tool transition pairs.     |
 | `data`             | Array of tool transition time series data. Each entry contains a tool number and a timestamp.     |
 | **Output**         | List of detected operations, each represented as `(part, t_s, t_e)` where `t_s` and `t_e` are start and end times of the operation. |
 
@@ -173,7 +173,7 @@ When traditional part signals are missing, this algorithm detects machining oper
 
 ```plaintext
 INPUT: 
-  part_transitions: dictionary mapping each part to ((s_1, s_2), (e_1, e_2)) // start and end tool transition pairs
+  part_transitions: dictionary mapping each part to `((s_1, s_2), (e_1, e_2))` // start and end tool transition pairs
   data: array of tool transition time series data // data[i] = (tool number, timestamp)
 OUTPUT: 
   operation: list of (part, t_s, t_e) tuples
