@@ -195,10 +195,12 @@ end for
 
 ### Implementation of the Part Detection Algorithm
 
-**Real-Time Monitoring**  
+#### Real-Time Monitoring
+
 The algorithm continuously processes incoming tool data using the MTConnect Sample Request. Each new tool number is compared against predefined transition patterns that mark the end of the most recent operation. Upon detecting a start transition, the algorithm inserts a new record into the MySQL database with the corresponding start timestamp. When the end transition is identified, this database entry is updated with the end timestamp. This ensures continuous and accurate tracking of part production in real time.
 
-**Tool Order Management**  
+#### Tool Order Management
+
 To accommodate changes in tool sequences associated with each part, a simple Python program is provided for managing tool orders. This program enables users to:
 
 - Add new tool sequences for each part  
@@ -206,7 +208,8 @@ To accommodate changes in tool sequences associated with each part, a simple Pyt
 
 Tool sequences input via the Tool Order Registration application are inserted into the `tool_order` table in the database, with their activation status tracked using the `is_active` field.
 
-**Tool Order Updates**  
+#### Tool Order Updates
+
 Currently, the algorithm fetches tool order information from the database every hour. Future improvements could include fetching updated tool orders immediately upon any changes to the tool order table, triggered by database events. This would enhance responsiveness and ensure the algorithm always uses the latest tool sequences.
 
 
