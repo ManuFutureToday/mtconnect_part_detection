@@ -197,7 +197,16 @@ end for
 
 #### Real-Time Monitoring
 
-The algorithm continuously processes incoming tool data using the MTConnect Sample Request. Each new tool number is compared against predefined transition patterns that mark the end of the most recent operation. Upon detecting a start transition, the algorithm inserts a new record into the MySQL database with the corresponding start timestamp. When the end transition is identified, this database entry is updated with the end timestamp. This ensures continuous and accurate tracking of part production in real time.
+### Real-Time Monitoring Workflow (Live Machine Data)
+
+| Step                         | Description                                                                                          |
+|------------------------------|------------------------------------------------------------------------------------------------------|
+| **Data Input**                | Continuously receives tool number data from MTConnect Sample Request.                               |
+| **Queue Insertion**           | Each incoming tool number is appended to a queue for sequential processing.                         |
+| **Tool Transition Detection** | Compares queued values against predefined tool order information to detect start/end transitions.  |
+| **Start Transition**          | When a start transition is found, a new record is inserted into the MySQL database with the start time. |
+| **End Transition**            | When an end transition is detected, the corresponding database record is updated with the end time.   |
+| **Result**                    | Enables continuous and accurate real-time tracking of part production.                             |
 
 #### Tool Order Management
 
