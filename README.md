@@ -155,8 +155,6 @@ This ensures robust, real-time data logging even across agent restarts or networ
 
 # Part Detection Algorithm Based on Tool Order
 
-**Yeeun, please fill out this section. Refer to the previous sections on formatting, and style. You can split two parts for 1) part detection algorithm, 2) implementation including tool order registration.**
-
 ## 1. Part Detection Algorithm
 
 When traditional part signals are missing, this algorithm detects machining operations by analyzing the sequence of tool transitions from MTConnect data. It uses tool number event streams collected via MTConnect Sample Requests to track tool usage patterns over time.
@@ -193,10 +191,6 @@ end for
 
 ## 2. Implementation and Tool Order Registration
 
-### Implementation of the Part Detection Algorithm
-
-#### Real-Time Monitoring
-
 ### Real-Time Monitoring Workflow (Live Machine Data)
 
 | Step                         | Description                                                                                          |
@@ -206,20 +200,27 @@ end for
 | **Tool Transition Detection** | Compares queued values against predefined tool order information to detect start/end transitions.  |
 | **Start Transition**          | When a start transition is found, a new record is inserted into the MySQL database with the start time. |
 | **End Transition**            | When an end transition is detected, the corresponding database record is updated with the end time.   |
-| **Result**                    | Enables continuous and accurate real-time tracking of part production.                             |
 
-#### Tool Order Management
+### Tool Order Management
 
-To accommodate changes in tool sequences associated with each part, a simple Python program is provided for managing tool orders. This program enables users to:
+The tool order management system allows dynamic control over the sequences of tools used for each part. This flexibility is essential when tool paths change due to production updates or machine configuration.
 
-- Add new tool sequences for each part  
-- Activate or deactivate existing tool sequences  
+#### Features
+- ✅ **Add New Tool Sequences**: Define and register tool sequences associated with a specific part.
+- 🔄 **Activate/Deactivate Sequences**: Enable or disable existing sequences without deleting them.
 
-Tool sequences input via the Tool Order Registration application are inserted into the `tool_order` table in the database, with their activation status tracked using the `is_active` field.
+#### Implementation Details
+- Tool sequences are managed through a **Python-based Tool Order Registration Application**.
+- When a sequence is added or modified, it is stored in the `tool_order` table in the database.
+- The `is_active` field in the table determines whether the sequence is currently in use.
 
-#### Tool Order Updates
+#### Current Behavior
+- The algorithm fetches tool order data **hourly** from the database.
 
-Currently, the algorithm fetches tool order information from the database every hour. Future improvements could include fetching updated tool orders immediately upon any changes to the tool order table, triggered by database events. This would enhance responsiveness and ensure the algorithm always uses the latest tool sequences.
+#### Future Improvement (Recommended)
+- ⏱️ **Event-Based Refresh**: Instead of polling every hour, configure the algorithm to react to **database triggers** when the `tool_order` table is updated. This ensures:
+  - Immediate adaptation to tool sequence changes
+  - Reduced latency and improved tracking accuracy
 
 
 # Example of Grafana Dashboard
