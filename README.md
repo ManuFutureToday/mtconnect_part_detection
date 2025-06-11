@@ -193,21 +193,21 @@ end for
 
 ### Real-Time Monitoring Workflow (Live Machine Data)
 
-| Step                         | Description                                                                                          |
-|------------------------------|------------------------------------------------------------------------------------------------------|
-| **Data Input**                | Continuously receives tool number data from MTConnect Sample Request.                               |
-| **Queue Insertion**           | Each incoming tool number is appended to a queue for sequential processing.                         |
-| **Tool Transition Detection** | Compares queued values against predefined tool order information to detect start/end transitions.  |
+| **Step**                      | **Description**                                                                                         |
+|------------------------------|---------------------------------------------------------------------------------------------------------|
+| **Fetch Tool Order Information** | Retrieves the latest tool order information from the database (e.g., hourly or via trigger) to ensure up-to-date transition patterns. |
+| **Data Input**                | Continuously receives tool number data from the MTConnect Sample Request.                              |
+| **Queue Insertion**           | Each incoming tool number is appended to a queue for sequential processing.                            |
+| **Tool Transition Detection** | Compares queued values against predefined tool order information to detect start and end transitions.  |
 | **Start Transition**          | When a start transition is found, a new record is inserted into the MySQL database with the start time. |
-| **End Transition**            | When an end transition is detected, the corresponding database record is updated with the end time.   |
-
+| **End Transition**            | When an end transition is detected, the corresponding database record is updated with the end time.    |
 ### Tool Order Management
 
-The tool order management system allows dynamic control over the sequences of tools used for each part. This flexibility is essential when tool paths change due to production updates or machine configuration.
+The tool order management system allows dynamic control over the sequences of tools used for each part. This flexibility is essential when tool paths change due to production updates.
 
 #### Features
-- ✅ **Add New Tool Sequences**: Define and register tool sequences associated with a specific part.
-- 🔄 **Activate/Deactivate Sequences**: Enable or disable existing sequences without deleting them.
+- ✅ **Add New Tool Sequences**: Define and register tool orders associated with a specific part.
+- 🔄 **Activate/Deactivate Sequences**: Enable or disable existing tool orders.
 
 #### Implementation Details
 - Tool sequences are managed through a **Python-based Tool Order Registration Application**.
@@ -217,7 +217,7 @@ The tool order management system allows dynamic control over the sequences of to
 #### Current Behavior
 - The algorithm fetches tool order data **hourly** from the database.
 
-#### Future Improvement (Recommended)
+#### Future Improvement
 - ⏱️ **Event-Based Refresh**: Instead of polling every hour, configure the algorithm to react to **database triggers** when the `tool_order` table is updated. This ensures:
   - Immediate adaptation to tool sequence changes
   - Reduced latency and improved tracking accuracy
