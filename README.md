@@ -27,7 +27,7 @@ The figure illustrates the overall architecture of the MTConnect-based data moni
   - The system begins with an MTConnect-equpped CNC machine tool that exposes its operational data in the form of standardized XMl documents.
 - **Edge computer**:
   - Located near the machine, edge computer is responsible for:
-    - **MTConnect Data Collection**: Periodically polloing the machine's MTConnect agent to retrieve real-time dta stream (Samples, Event, Conditions).
+    - **MTConnect Data Collection**: Periodically polling the machine's MTConnect agent to retrieve real-time data stream (Samples, Event, Conditions).
     - **Part Detection Algorithm**: Analyzing collected data (e.g. tool order) to detect individual machining operations and associate them with specific parts.
 - **Server Computer**:
   - A centralized server stores and visualizes the collected data:
@@ -147,7 +147,7 @@ DB = "factory" # DB name
 The script:
 
 - Parses `probe` responses to register the device and data items.
-- Checks and tracks the MTConnect Agent `instanceId` to avoide dta loss in case of resets.
+- Checks and tracks the MTConnect Agent `instanceId` to avoide data loss in case of resets.
 - Logs `Sample`, `Event`, and `Condition` streams into separate tables.
 - Automatically resume from the last recorded sequence.
 
@@ -158,6 +158,45 @@ This ensures robust, real-time data logging even across agent restarts or networ
 **Yeeun, please fill out this section. Refer to the previous sections on formatting, and style. You can split two parts for 1) part detection algorithm, 2) implementation including tool order registration.**
 
 ### 1. Part Detection Algorithm
+
+When traditional part signals are missing, this algorithm detects parts by analyzing the sequence of tool usage from MTConnect data. This enables accurate real-time part tracking and supports advanced monitoring applications.
+
+INPUT: 
+  part_transitions: dictionary mapping each part to ((s_1, s_2), (e_1, e_2)) 
+    // start and end tool transition pairs
+  data: array of tool transition time series data
+    // data[i] represents the tool number and timestamp at position i
+
+OUTPUT: 
+  operation: list of detected operations (part, t_s, t_e) 
+    // t_s and t_e are the start and end times of each operation
+
+Initialize:
+  operation ← empty list
+  n ← length(data)
+  start ← false  // flag to indicate start time found
+
+for i = 1 to n - 1 do
+  for each (part, ((s_1, s_2), (e_1, e_2))) in part_transitions do
+    if (data[i], data[i + 1]) = (s_1, s_2) then
+      t_s ← data[i].time  // record start time
+      start ← true
+    end if
+
+    if start then
+      for j = i + 2 to n - 1 do
+        if (data[j], data[j + 1]) = (e_1, e_2) then
+          t_e ← data[j + 1].time  // record end time
+          operation.append((part, t_s, t_e))
+          start ← false
+          break
+        end if
+      end for
+    end if
+  end for
+end for
+
+
 
 ### 2. Implementation and Tool Order Registration
 
