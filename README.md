@@ -161,6 +161,7 @@ This ensures robust, real-time data logging even across agent restarts or networ
 
 When traditional part signals are missing, this algorithm detects parts by analyzing the sequence of tool usage from MTConnect data. This enables accurate real-time part tracking and supports advanced monitoring applications.
 
+```plaintext
 INPUT: 
   part_transitions: dictionary mapping each part to ((s_1, s_2), (e_1, e_2)) 
     // start and end tool transition pairs
@@ -175,14 +176,12 @@ Initialize:
   operation ← empty list
   n ← length(data)
   start ← false  // flag to indicate start time found
-
 for i = 1 to n - 1 do
   for each (part, ((s_1, s_2), (e_1, e_2))) in part_transitions do
     if (data[i], data[i + 1]) = (s_1, s_2) then
       t_s ← data[i].time  // record start time
       start ← true
     end if
-
     if start then
       for j = i + 2 to n - 1 do
         if (data[j], data[j + 1]) = (e_1, e_2) then
@@ -195,7 +194,7 @@ for i = 1 to n - 1 do
     end if
   end for
 end for
-
+'''
 
 
 ### 2. Implementation and Tool Order Registration
