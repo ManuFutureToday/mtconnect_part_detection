@@ -157,11 +157,11 @@ This ensures robust, real-time data logging even across agent restarts or networ
 
 **Yeeun, please fill out this section. Refer to the previous sections on formatting, and style. You can split two parts for 1) part detection algorithm, 2) implementation including tool order registration.**
 
-### 1. Part Detection Algorithm
+## 1. Part Detection Algorithm
 
 When traditional part signals are missing, this algorithm detects machining operations by analyzing the sequence of tool transitions from MTConnect data. It uses tool number event streams collected via MTConnect Sample Requests to track tool usage patterns over time.
 
-## Inputs and Outputs
+### Inputs and Outputs
 
 | Parameter          | Description                                                                                       |
 |--------------------|---------------------------------------------------------------------------------------------------|
@@ -169,7 +169,7 @@ When traditional part signals are missing, this algorithm detects machining oper
 | `data`             | Array of tool transition time series data. Each entry contains a tool number and a timestamp.     |
 | **Output**         | List of detected operations, each represented as `(part, t_s, t_e)` where `t_s` and `t_e` are start and end times of the operation. |
 
-## Pseudocode
+### Pseudocode
 
 ```plaintext
 Initialize:
@@ -192,7 +192,7 @@ end for
 ```
 
 
-### 2. Implementation and Tool Order Registration
+## 2. Implementation and Tool Order Registration
 
 
 # Example of Grafana Dashboard
