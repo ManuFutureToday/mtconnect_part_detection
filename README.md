@@ -201,27 +201,24 @@ end for
 | **Tool Transition Detection** | Compares queued values against predefined tool order information to detect start and end transitions.  |
 | **Start Transition**          | When a start transition is found, a new record is inserted into the MySQL database with the start time. |
 | **End Transition**            | When an end transition is detected, the corresponding database record is updated with the end time.    |
+
 ### Tool Order Management
 
-The tool order management system allows dynamic control over the sequences of tools used for each part. This flexibility is essential when tool paths change due to production updates.
+The tool order management system provides dynamic control over the sequences of tools used for each part. This is especially useful when tool paths change due to updates in the manufacturing process.
 
 #### Features
-- ✅ **Add New Tool Sequences**: Define and register tool orders associated with a specific part.
-- 🔄 **Activate/Deactivate Sequences**: Enable or disable existing tool orders.
+- **Add New Tool Sequences**: Define and register new tool orders associated with specific parts.
+- **Activate/Deactivate Sequences**: Toggle tool orders on or off as needed for different production scenarios.
 
-#### Implementation Details
-- Tool sequences are managed through a **Python-based Tool Order Registration Application**.
-- When a sequence is added or modified, it is stored in the `tool_order` table in the database.
-- The `is_active` field in the table determines whether the sequence is currently in use.
+#### How It Works
+- Tool sequences are managed via a **Python-based Tool Order Registration Application**.
+- All sequences are stored in the `tool_order` table in the database.
+- The `is_active` column in the table indicates whether a tool sequence is currently in use.
 
-#### Current Behavior
-- The algorithm fetches tool order data **hourly** from the database.
-
-#### Future Improvement
-- ⏱️ **Event-Based Refresh**: Instead of polling every hour, configure the algorithm to react to **database triggers** when the `tool_order` table is updated. This ensures:
-  - Immediate adaptation to tool sequence changes
-  - Reduced latency and improved tracking accuracy
-
+#### 🔄 Tool Order Updates
+- **Current Behavior**: The algorithm polls the database **hourly** to retrieve the most recent active tool orders.
+- **Planned Improvement**: Replace polling with **event-driven updates** by adding database triggers.
+  - Enables immediate response to tool sequence changes
 
 # Example of Grafana Dashboard
 
