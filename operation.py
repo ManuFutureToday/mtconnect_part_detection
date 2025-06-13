@@ -23,7 +23,7 @@ link_updated = agent
 response_updated = "UNAVAILABLE" # initial response of MTConnect agent server
 
 device_name = "device_name" 
-dataItemId = "dataItemId"
+dataItemId = "current_tool"
 data_item_xpath = "//DataItem[@id='" + dataItemId + "']"
 link = f"{agent}/{device_name}/sample?path={data_item_xpath}"
 
