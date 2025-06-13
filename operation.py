@@ -1,29 +1,11 @@
 '''
-250217_operation.py
-02/18/2025 Yeeun Bae
+operation.py
+06/13/2025 Yeeun Bae
 
-This code aims to find each operation using Mp1CurrentTool sample metric key value and insert records into krpm.operation table.
+This code aims to find each operation using Tool value (sample metric key) and insert records into operation table.
 Specifically,
-1. Input a set of sequences from MTConnect queue using sample request filtered out by @id=p1CurrentTool, distinguish each operation, and insert records into krpm.operation
-2. Compare new incoming sequence's value with the value of last available operation sequence. If they are (starting tool , ending tool), insert a record into krpm.operation
-
-<Tools being used to generate each part>
-5387600: 31, 87, 88, 89, 90, 91, 92, 93, 94, 95
-DZ101524: 1, 31, 39, 34, 32, 30, 37, 35, 33, 36, 38, 40
-
-To delete duplicated record (same part & start_timestamp) with greater index, run this query:
-"SET SQL_SAFE_UPDATES = 0;
-DELETE o1
-FROM krpm.operation o1
-JOIN (
-    SELECT MIN(`index`) AS min_index, part, start_timestamp
-    FROM krpm.operation
-    GROUP BY part, start_timestamp
-) o2 ON o1.part = o2.part AND o1.start_timestamp = o2.start_timestamp
-WHERE o1.`index` > o2.min_index;
-SET SQL_SAFE_UPDATES = 1;
-
-SELECT * FROM krpm.operation;"
+1. Input a set of sequences from MTConnect queue using sample request filtered out by @id=p1CurrentTool, distinguish each operation, and insert records into operation table.
+2. Compare new incoming sequence's value with the value of last available operation sequence. If they are (starting tool , ending tool), insert a record into operation table.
 
 '''
 
@@ -36,12 +18,12 @@ import threading
 from collections import deque
 
 # Sample XML data (you should replace this with the actual XML content)
-agent = "http://100.74.247.52:5000/"
+agent = "http://<MTConnect_IP>:<Port>/" # Your MTConnect Agent IP:Port
 link_updated = agent
 response_updated = "UNAVAILABLE" # initial response of MTConnect agent server
 
-device_name = "OKUMA.MachiningCenter" 
-dataItemId = "Mp1CurrentTool"
+device_name = "device_name" 
+dataItemId = "dataItemId"
 data_item_xpath = "//DataItem[@id='" + dataItemId + "']"
 link = f"{agent}/{device_name}/sample?path={data_item_xpath}"
 
@@ -51,7 +33,6 @@ PORT = 3306 # MySQl port number
 USER = "Username" # User credential
 PASSWORD = "Password" # User credential
 DB = "factory" # DB name
-
 
 def connect_mysql(host, user, password, db, port):
     ##### loop until getting connection
@@ -235,7 +216,6 @@ while True:
     try:
         # result = requests.get(link_updated, timeout=10)
         result = requests.get(link_updated)
-        # http://100.74.247.52:5000//OKUMA.MachiningCenter/sample?path=//DataItem[@id='Mp1CurrentTool']?from=731087
         response = "AVAILABLE"
         # print("Machine is Available.")
     except requests.exceptions.Timeout: # exception case for Timeout when machine is off.
@@ -344,7 +324,7 @@ while True:
                                         if (value == None or value == "UNAVAILABLE" or value == ""): # if current value is invalid
                                             if new_timestamp == None or new_timestamp > timestamp:
                                                 new_timestamp = timestamp # bring timestamp of the invalid value (which is the timestmap after the third tool in end_trnasition)
-                                                timestamp_src = 'most recent Mp1CurrentTool'
+                                                timestamp_src = 'most recent tool'
                                                 print(timestamp_src, new_timestamp)
 
 
