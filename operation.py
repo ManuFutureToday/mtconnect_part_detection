@@ -4,7 +4,7 @@ operation.py
 
 This code aims to find each operation using Tool value (sample metric key) and insert records into operation table.
 Specifically,
-1. Input a set of sequences from MTConnect queue using sample request filtered out by @id=p1CurrentTool, distinguish each operation, and insert records into operation table.
+1. Input a set of sequences from MTConnect queue using sample request, distinguish each operation, and insert records into operation table.
 2. Compare new incoming sequence's value with the value of last available operation sequence. If they are (starting tool , ending tool), insert a record into operation table.
 
 '''
@@ -157,7 +157,7 @@ delay = 10 # 10 seconds of delday for connection retry
 
 last_start = [-1, 0, -1] # last available start tool transition:(value, timestamp, sequence)
 
-# Append a set of operation rows from a set of sequences from first sample request response to krpm.operation table
+# Append a set of operation rows from a set of sequences from first sample request response to operation table
 def find_operation(data):
     # Detect start and end times for operations
     global last_start  # This ensures we modify the global variable
@@ -253,11 +253,7 @@ while True:
                 # compare sequence of the most recent itme in queue to the newly arrived item
                 if queue and (queue[-1][-1] != sequence) and (value != None and value != "UNAVAILABLE" and value != ""):
                     value = int(value)
-                    '''
-                    <Tools changed>
-                    5387600: 31,87,88,106,89,92,93,90,91,107,94,95
-                    DZ101524:  01,31,39,32,30,37,34,35,38,36,33,40,  01,31,34,35,36,33
-                    '''
+                    
                     for (uuid, part_number), transitions in part_operations.items():
                         tool_idx = transitions.get("tool_idx")  # Fetch idx
     
@@ -283,7 +279,7 @@ while True:
                         if last_start and last_start[0] == transitions['start_transition'][0]: # find corresponding part number for the latest operation.
                                 # if all 1st, 2nd, 3rd elements in queue form end transition
                                 if (queue[0][0], queue[1][0], queue[2][0]) == (transitions['end_transition'][0], transitions['end_transition'][1], transitions['end_transition'][2]):
-                                        # find timestamp of "STOPPED" value of dataitemid = "Mpexecution" that is greater than or equal to the most recent "timestamp"
+                                        # find timestamp of "STOPPED" value of dataitemid = "execution_status" that is greater than or equal to the most recent "timestamp"
                                         #  rely on mtc_event or get it through request. mtc_event will be easier.
                                         timestamp_src = None
                                         new_timestamp = None
@@ -304,14 +300,18 @@ while True:
                                             temp = format_timestamp(timestamp)
                                             # print("formatted timestamp :", temp)
 
+                                            # Metric key indicating current status of the machine — e.g., stopped, interrupted, etc.
+                                            metric_key = 'execution_status'
+
                                             execution_query = f"""
                                                 SELECT timestamp 
-                                                FROM krpm.mtc_event 
-                                                WHERE dataitemid = 'Mpexecution' 
+                                                FROM mtc_event 
+                                                WHERE dataitemid = '{metric_key}' 
                                                 AND (value = 'STOPPED' OR value = 'PROGRAM_STOPPED' OR value = 'FEED_HOLD')
                                                 AND timestamp > '{temp}'
                                                 ORDER BY timestamp ASC LIMIT 1
                                             """
+
                                             result = execute_query(execution_query)
                                             if result:
                                                 new_timestamp = result[0]
