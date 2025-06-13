@@ -257,8 +257,6 @@ while True:
                     for (uuid, part_number), transitions in part_operations.items():
                         tool_idx = transitions.get("tool_idx")  # Fetch idx
     
-                        #print("new : [", value, timestamp, sequence, "]  last_start : ", last_start, "  last_avail_seq_queue : ", last_avail_seq_queue) 
-
                         # if new start timestamp is found (== second tool of start transition is found)                       
                         if (queue[1][0], queue[2][0], value) == (transitions['start_transition'][0], transitions['start_transition'][1], transitions['start_transition'][2]):
                                 query_return(uuid, part_number, queue[1][1], None, tool_idx)
@@ -283,8 +281,6 @@ while True:
                                         #  rely on mtc_event or get it through request. mtc_event will be easier.
                                         timestamp_src = None
                                         new_timestamp = None
-
-                                        # print("DEBUG: match condition:", queue[-1][-1] == sequence)
                                                                                 
                                         if (queue[-1][-1] == sequence): # if repeated value (the most recent tool value is already in the queue), find if execution is stopped, bring oldest timestamp
                                             # print("most recent timestamp: ", timestamp)
@@ -298,11 +294,9 @@ while True:
                                                     return dt_local.strftime("%Y-%m-%d %H:%M:%S.%f") # Trim to microseconds like DB format
                                                 return timestamp
                                             temp = format_timestamp(timestamp)
-                                            # print("formatted timestamp :", temp)
 
                                             # Metric key indicating current status of the machine — e.g., stopped, interrupted, etc.
                                             metric_key = 'execution_status'
-
                                             execution_query = f"""
                                                 SELECT timestamp 
                                                 FROM mtc_event 
@@ -320,13 +314,11 @@ while True:
                                             # else: 
                                                 # print("no pexecution timestamp")
                                                                 
-
                                         if (value == None or value == "UNAVAILABLE" or value == ""): # if current value is invalid
                                             if new_timestamp == None or new_timestamp > timestamp:
                                                 new_timestamp = timestamp # bring timestamp of the invalid value (which is the timestmap after the third tool in end_trnasition)
                                                 timestamp_src = 'most recent tool'
                                                 print(timestamp_src, new_timestamp)
-
 
                                         if (new_timestamp): 
                                             query_return(uuid, part_number, last_start[1], new_timestamp, tool_idx) # pass 
@@ -344,23 +336,17 @@ while True:
                         data.append([value, timestamp, sequence])
                         if value != None and value != "UNAVAILABLE" and value != "": 
                             queue.append([value, timestamp, sequence]) # filter out any non-tool number value
-
                 find_operation(data)
-
-            # print(value, timestamp, sequence) 
-
             link_updated = link+"?from="+nextSeq
 
             # add to queue if value is valid and sequence is not in the queue
             if value not in (None, "UNAVAILABLE", "") and len(queue) > 2 and len(queue[2]) > 2 and sequence != queue[2][2]:
                 queue.append([int(value), timestamp, sequence])
                 # last_avail_seq_queue = [int(value), timestamp, sequence] # filter out any non-tool number value
-            
             first_iter = False
         else: # In case of machine is unavailable continuously.
             print("Machine is ", response)
             #print("Nothing happens....")
-
     else:
         if response == "AVAILABLE": # In case machine availability is changed from unavailable to available, which means machine turned on just before.
             print("Machine is ", response)
