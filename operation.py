@@ -46,11 +46,12 @@ data_item_xpath = "//DataItem[@id='" + dataItemId + "']"
 link = f"{agent}/{device_name}/sample?path={data_item_xpath}"
 
 ## MySQL credential
-HOST = "100.99.103.12"
-PORT = 3306
-USER = "admin"
-PASSWORD = "boilerup!"
-DB = "krpm"
+HOST = "your.mysql.server.ip" # MySQl Server IP in IPv4 format
+PORT = 3306 # MySQl port number
+USER = "Username" # User credential
+PASSWORD = "Password" # User credential
+DB = "factory" # DB name
+
 
 def connect_mysql(host, user, password, db, port):
     ##### loop until getting connection
